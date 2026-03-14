@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FindBack - Premium</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="global-bg"></div>
+    <canvas id="interactive-canvas"></canvas>
+
+    <div id="splash-screen" class="screen">
+        <div class="splash-content">
+            <div class="logo-container">
+                <svg class="radar-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle class="ring ring-outer" cx="50" cy="50" r="45" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+                    <circle class="ring ring-middle" cx="50" cy="50" r="30" fill="none" stroke="#6366f1" stroke-width="3"/>
+                    <circle class="ring ring-inner" cx="50" cy="50" r="15" fill="none" stroke="#a855f7" stroke-width="4"/>
+                    <circle class="core" cx="50" cy="50" r="5" fill="#fff" />
+                </svg>
+            </div>
+            <h1 class="logo-text">FindBack</h1>
+            <p class="loading-text">Establishing secure connection... <br><span class="hint">(Move mouse rapidly & click to interact with the network)</span></p>
+        </div>
+    </div>
+
+    <div id="login-screen" class="screen hidden">
+        <div class="glass-panel form-container" id="login-box">
+            <h2>Welcome to FindBack</h2>
+            <p>Enter your details to synchronize.</p>
+            <form id="login-form">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="name" placeholder="John Doe" required>
+                </div>
+                <div class="input-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="phone" placeholder="1234567890" required>
+                </div>
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="email" placeholder="email@example.com" required>
+                </div>
+                <button type="submit" class="glow-btn">Initialize Session</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="otp-screen" class="screen hidden">
+        <div class="glass-panel form-container">
+            <div style="text-align: left; margin-bottom: 20px;">
+                <button type="button" class="back-btn" id="back-btn-otp">← Back to Login</button>
+            </div>
+            <h2>Authentication</h2>
+            <p>An encrypted token has been dispatched.</p>
+            <form id="otp-form">
+                <div class="input-group">
+                    <label>Enter Token (OTP)</label>
+                    <input type="text" id="otp" placeholder="••••••" required maxlength="6" class="center-text">
+                </div>
+                <button type="submit" class="glow-btn">Verify Access</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="main-app" class="screen hidden app-layout">
+        
+        <header class="glass-panel desktop-header">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <button type="button" class="back-btn" id="logout-btn" style="border-right: 1px solid rgba(255,255,255,0.2); padding-right: 20px;">← Logout</button>
+                <div class="header-logo" id="nav-logo" style="cursor: pointer;">
+                    <svg class="mini-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="#8b5cf6" stroke-width="8"/>
+                        <circle cx="50" cy="50" r="20" fill="#8b5cf6" />
+                    </svg>
+                    <h2>FindBack</h2>
+                </div>
+            </div>
+            
+            <nav class="top-nav">
+                <a href="#" class="nav-link active" id="nav-dashboard">Dashboard</a>
+                <a href="#" class="nav-link">Live Map</a>
+                <a href="#" class="nav-link" id="nav-intel">Intel</a>
+            </nav>
+
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div class="notification-icon" id="nav-chat" title="Active Chats">💬</div>
+                <div class="notification-icon" title="Notifications">🔔</div>
+                <div class="user-profile" id="profile-trigger" title="Edit Profile">
+                    <h3 id="greeting-name" style="margin: 0; font-size: 1rem; font-weight: 600;">Hi, User</h3>
+                    <div class="avatar profile-avatar">U</div>
+                </div>
+            </div>
+        </header>
+
+        <aside id="settings-sidebar" class="glass-panel hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">Profile Settings</h3>
+                <button id="close-settings" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem;">✖</button>
+            </div>
+            <form id="profile-edit-form">
+                <div class="input-group">
+                    <label>Profile Picture</label>
+                    <div class="file-drop-zone" style="padding: 15px;">
+                        <span style="font-size: 0.8rem;">Upload New Photo</span>
+                        <input type="file" accept="image/*" id="edit-avatar">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="edit-name" placeholder="Update Name" required>
+                </div>
+                <div class="input-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="edit-phone" placeholder="Update Phone">
+                </div>
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="edit-email" placeholder="Update Email">
+                </div>
+                <button type="submit" class="glow-btn" style="padding: 12px; font-size: 1rem;">Save Changes</button>
+            </form>
+        </aside>
+
+        <main class="desktop-content">
+            
+            <div id="view-dashboard" class="view-section">
+                <div class="action-grid">
+                    <div class="glass-panel action-card find-card">
+                        <div class="card-bg-glow blue-glow"></div>
+                        <div class="card-text">
+                            <h3>REPORT LOST DEVICE</h3>
+                            <p>Broadcast your missing hardware to the local network to get help finding it.</p>
+                        </div>
+                        <button class="card-btn" id="btn-report-lost">Create Alert 📡</button>
+                    </div>
+
+                    <div class="glass-panel action-card report-card">
+                        <div class="card-bg-glow pink-glow"></div>
+                        <div class="card-text">
+                            <h3>REPORT FOUND DEVICE</h3>
+                            <p>Help the community by logging a device you have located in the area.</p>
+                        </div>
+                        <button class="card-btn" id="btn-report-found">Log Device 📢</button>
+                    </div>
+                </div>
+
+                <div class="glass-panel recent-section">
+                    <div class="section-header">
+                        <h3>My Active Reports</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Devices you have reported lost or found.</p>
+                    </div>
+                    <ul class="device-list">
+                        <li>
+                            <div class="device-info">
+                                <span class="device-icon glass-icon">💻</span>
+                                <div>
+                                    <strong>Dell XPS 15 (Lost)</strong>
+                                    <span class="location">Last seen: CUSAT Library, Sector 4</span>
+                                </div>
+                            </div>
+                            <span class="time match-link" id="link-to-chat" style="color: #ec4899; cursor: pointer; text-decoration: underline;">Match Found! (Check Chat)</span>
+                        </li>
+                        <li>
+                            <div class="device-info">
+                                <span class="device-icon glass-icon">📱</span>
+                                <div>
+                                    <strong>Black iPhone 13 (Found)</strong>
+                                    <span class="location">Location Selected: Bench outside Sahara Hostel</span>
+                                </div>
+                            </div>
+                            <span class="time" style="color: #34d399;">Awaiting Owner...</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="view-report-lost" class="view-section hidden">
+                <div style="max-width: 600px; margin: 0 auto 15px;">
+                    <button type="button" class="back-btn" id="back-btn-lost">← Back to Dashboard</button>
+                </div>
+                <div class="glass-panel form-container" style="max-width: 600px; margin: 0 auto;">
+                    <h2>Report Lost Device</h2>
+                    <form class="report-form">
+                        <div class="input-group"><label>Device Name & Brand</label><input type="text" required></div>
+                        <div class="input-group"><label>Detailed Description</label><textarea rows="3" required></textarea></div>
+                        <div class="input-group"><label>Last Known Location</label><input type="text" required></div>
+                        <div class="input-group"><label>Reward Offered (Optional - in ₹)</label><input type="number" min="0"></div>
+                        <div class="input-group"><label>Proof of Ownership <span style="color:#ec4899;">*</span></label>
+                            <div class="file-drop-zone"><span>📄 Upload Proof Document</span><input type="file" required></div>
+                        </div>
+                        <button type="submit" class="glow-btn" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">Submit Alert</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="view-report-found" class="view-section hidden">
+                <div style="max-width: 600px; margin: 0 auto 15px;">
+                    <button type="button" class="back-btn" id="back-btn-found">← Back to Dashboard</button>
+                </div>
+                <div class="glass-panel form-container" style="max-width: 600px; margin: 0 auto;">
+                    <h2>Log Found Device</h2>
+                    <form class="report-form">
+                        <div class="input-group"><label>What did you find?</label><input type="text" required></div>
+                        <div class="input-group"><label>Exact Location Found</label><input type="text" required></div>
+                        <div class="input-group">
+                            <label>Device Handover Preference <span style="color:#ec4899;">*</span></label>
+                            <div class="radio-group" style="display:flex; gap:20px; margin-top:10px;">
+                                <label><input type="radio" name="handover" value="hand" required> Keep in hand</label>
+                                <label><input type="radio" name="handover" value="locker"> Drop in Locker</label>
+                            </div>
+                        </div>
+                        <div class="input-group"><label>Upload Photo of Device</label>
+                            <div class="file-drop-zone"><span>📸 Upload Image</span><input type="file" required></div>
+                        </div>
+                        <button type="submit" class="glow-btn" style="background: linear-gradient(135deg, #be185d 0%, #e11d48 100%);">Submit Log</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="view-intel" class="view-section hidden">
+                <h2 style="margin-bottom: 25px; font-size: 2rem;">Global Recovery Intel</h2>
+                <p style="color: var(--text-muted); margin-bottom: 30px;">This log only displays devices where <strong>Handover is Complete</strong>.</p>
+                <div class="glass-panel recent-section">
+                    <ul class="device-list">
+                        <li style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                            <div class="device-info">
+                                <span class="device-icon glass-icon">🎧</span>
+                                <div><strong>Sony WH-1000XM4 Headphones</strong><span class="location" style="color: #34d399;">Status: Handover Complete</span></div>
+                            </div>
+                            <div style="text-align: right;">
+                                <button class="card-btn btn-scam-claim" style="font-size: 0.9rem; padding: 8px 15px;">File Scam Claim ⚠️</button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="view-chat" class="view-section hidden">
+                <div style="max-width: 900px; margin: 0 auto 15px; display: flex; justify-content: space-between; align-items: center;">
+                    <button type="button" class="back-btn" id="back-btn-chat">← Back to Dashboard</button>
+                    <button type="button" class="glow-btn" id="btn-blackmail" style="width: auto; padding: 8px 15px; background: linear-gradient(135deg, #e11d48, #9f1239); margin:0; font-size: 0.9rem;">🚨 Report Blackmail</button>
+                </div>
+                
+                <div class="chat-layout" style="max-width: 900px; margin: 0 auto; display: flex; gap: 20px; height: 550px;">
+                    
+                    <div class="chat-sidebar glass-panel">
+                        <h3 style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin:0; font-size: 1.1rem; background: rgba(0,0,0,0.2);">Active Chats</h3>
+                        <div class="chat-contact-list custom-scrollbar">
+                            <div class="chat-contact active" id="chat-contact-finder" onclick="switchChatContext('finder')">
+                                <div class="contact-avatar">F</div>
+                                <div class="contact-info"><strong>Finder #8492</strong><span>Re: Your Lost Dell XPS 15</span></div>
+                            </div>
+                            <div class="chat-contact" id="chat-contact-owner" onclick="switchChatContext('owner')">
+                                <div class="contact-avatar">O</div>
+                                <div class="contact-info"><strong>Owner #2214</strong><span>Re: Found Black iPhone 13</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-main glass-panel form-container" style="padding: 0; display:flex; flex-direction:column; flex: 1;">
+                        
+                        <div style="padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="text-align: left;">
+                                <h3 style="margin: 0; font-size: 1.2rem;" id="chat-header-name">Finder #8492</h3>
+                                <p style="margin: 3px 0 0 0; font-size: 0.85rem; color: #34d399;">● Encrypted Connection</p>
+                            </div>
+                            <button id="btn-agreement" class="glow-btn" style="width: auto; padding: 6px 12px; margin:0; font-size: 0.85rem; background: linear-gradient(135deg, #10b981, #059669);">🤝 Come to Agreement</button>
+                        </div>
+
+                        <div class="agreement-box" style="background: rgba(139, 92, 246, 0.15); border-bottom: 1px solid rgba(139, 92, 246, 0.3); padding: 15px 20px; text-align: left;">
+                            <strong style="color: var(--primary); display:block; margin-bottom: 5px; font-size:0.9rem;">🤝 Handover Location Details</strong>
+                            <p id="chat-agreement-location" style="margin:0; font-size: 0.95rem;"><strong>Location selected by Finder:</strong> Main Library Entrance</p>
+                            <p id="chat-agreement-role" style="margin:5px 0 0 0; font-size: 0.85rem; color: var(--text-muted);">Your Role: Owner</p>
+                        </div>
+
+                        <div class="chatbot-messages custom-scrollbar" id="chat-messages-area" style="flex:1; padding: 20px; background: transparent;">
+                            <div class="message bot-message" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);"><strong>Finder:</strong> Hello! I found your XPS laptop.</div>
+                            <div class="message user-message" style="background: rgba(139, 92, 246, 0.2); border-color: rgba(139, 92, 246, 0.4); color: white;"><strong>You:</strong> Thank you so much!</div>
+                        </div>
+
+                        <div class="chatbot-input" style="background: rgba(0,0,0,0.4); border-top: 1px solid rgba(255,255,255,0.1); position: relative;">
+                            
+                            <div id="attachment-menu" class="refined-popup hidden">
+                                <button class="popup-item" id="btn-send-location">
+                                    <div class="popup-circle"></div>
+                                    <span class="popup-text">Location</span>
+                                </button>
+                                <button class="popup-item" id="btn-send-photo">
+                                    <div class="popup-circle"></div>
+                                    <span class="popup-text">Photo</span>
+                                </button>
+                            </div>
+
+                            <button id="btn-attach" style="background: transparent; color: var(--text-muted); font-size: 1.8rem; width: 40px; margin: 0 10px 0 0; font-weight: 300; transition: color 0.3s;">+</button>
+                            <input type="text" placeholder="Message securely..." id="peer-chat-input">
+                            <button id="peer-chat-send">→</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="app-footer glass-panel">
+            <p>FindBack System © 2026 | <a href="mailto:findbackho@gmail.com" class="footer-email">✉️ findbackho@gmail.com</a></p>
+        </footer>
+    </div>
+
+    <div id="agreement-modal" class="screen hidden" style="z-index: 9999; background: rgba(0,0,0,0.8);">
+        <div class="glass-panel" style="padding: 40px; border-radius: 20px; text-align: center; max-width: 400px; transform: scale(1.1);">
+            <div style="font-size: 3rem; margin-bottom: 10px;">✅</div>
+            <h3 id="agreement-modal-text" style="margin-bottom: 20px; font-size: 1.2rem;">The user has agreed to the terms!</h3>
+            <button id="close-agreement-modal" class="glow-btn">Awesome!</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
